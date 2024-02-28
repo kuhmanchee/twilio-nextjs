@@ -4,7 +4,9 @@ import { useState } from "react";
 import styles from "./styles.module.css";
 import { Toaster, toast } from "sonner";
 import Image from "next/image";
-import logo from "@/public/logo.svg";
+import logo from "@/public/teralife-logo.svg";
+
+
 
 export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -96,36 +98,15 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center p-8 lg:p-12">
       <Toaster position="top-center" />
       <section className="mb-8 flex flex-col gap-8 items-center">
-        <h1 className="text-4xl font-bold text-center sr-only">
-          Template Twilio Verification Next.js
+        <h1 className="text-4xl font-bold text-center ">
+        <Image src={logo} alt="logo" width={150} height={150}></Image>
         </h1>
-        <a
-          className="block mx-auto my-8"
-          href="https://cameronyoungblood.com"
-          target="_blank"
-        >
-          <Image src={logo} alt="logo" width={150} height={150}></Image>
-        </a>
+        
         <h2 className="text-xl max-w-screen-sm text-center">
-          A generic Twilio Verification Template using Next JS, Twilio, DaisyUI,
-          and Toast by Sonner. Created by Bridger Tower and Cameron Youngblood.
+         Doctor Onboarding
         </h2>
       </section>
-      <div className="flex gap-4 mb-12 items-center justify-center">
-        <a
-          className="border-b-2 hover:opacity-75"
-          href="https://github.com/by9d8/twilio-next-template"
-          target="_blank"
-        >
-          See the Repo on GitHub
-        </a>
-        <a
-          href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fby9d8%2Ftwilio-next-template&env=TWILIO_SID,TWILIO_AUTH_TOKEN,VERIFICATION_SID"
-          target="_blank"
-        >
-          <img src="https://vercel.com/button" alt="Deploy with Vercel" />
-        </a>
-      </div>
+      
       {!verified ? (
         <div className={styles.neu}>
           <div className="w-max">
@@ -138,7 +119,7 @@ export default function Home() {
                   <input
                     name="phoneNumber"
                     type="text"
-                    placeholder="(222)-222-2222"
+                    placeholder="222-222-2222"
                     className="input input-bordered w-full max-w-xs"
                     value={phoneNumber}
                     onChange={handlePhoneNumberChange}
@@ -195,7 +176,7 @@ function formatPhoneNumber(value) {
 
 function cleanPhoneNumber(phoneNumber) {
   const cleanedNumber = phoneNumber.replace(/\D/g, "");
-  const formattedNumber = "+1" + cleanedNumber;
+  const formattedNumber = "+91" + cleanedNumber;
   return formattedNumber;
 }
 
