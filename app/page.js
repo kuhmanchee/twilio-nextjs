@@ -11,10 +11,10 @@ import logo from "@/public/teralife-logo.svg";
 export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [twilioCode, setTwilioCode] = useState("");
-  const [name, setName] = useState("Sahil");
-  const [hospitalName, setHospitalName] = useState("Test");
-  const [designation, setDesignation] = useState("Test");
-  const [speciality, setSpeciality] = useState("TEst");
+  const [name, setName] = useState("");
+  const [hospitalName, setHospitalName] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [speciality, setSpeciality] = useState("");
   const [visible, setVisible] = useState(false);
   const [verified, setVerified] = useState(false);
 
@@ -279,7 +279,7 @@ export default function Home() {
                     onChange={handleTwilioCodeChange}
                   />
                 </div>
-                <button className="btn btn-wide my-4">Submit</button>
+                <button className="btn btn-wide my-4 w-full">Submit</button>
               </form>
             )}
           </div>
