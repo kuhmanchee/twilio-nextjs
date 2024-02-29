@@ -78,7 +78,7 @@ export default function Home() {
                   hospitalName: hospitalName,
                   designation: designation,
                   speciality: speciality,
-                  phoneNumber: cleanedNumber
+                  phone: cleanedNumber
                 }
 
               }),
