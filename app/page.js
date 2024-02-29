@@ -11,6 +11,10 @@ import logo from "@/public/teralife-logo.svg";
 export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [twilioCode, setTwilioCode] = useState("");
+  const [name, setName] = useState("Sahil");
+  const [hospitalName, setHospitalName] = useState("Test");
+  const [designation, setDesignation] = useState("Test");
+  const [speciality, setSpeciality] = useState("TEst");
   const [visible, setVisible] = useState(false);
   const [verified, setVerified] = useState(false);
 
@@ -24,19 +28,64 @@ export default function Home() {
     setTwilioCode(formattedTwilioCode);
   };
 
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleHospitalNameChange = (e) => {
+    setHospitalName(e.target.value);
+  };
+
+  const handleDesignationChange = (e) => {
+    setDesignation(e.target.value);
+  };
+
+  const handleSpecialityChange = (e) => {
+    setSpeciality(e.target.value);
+  };
+
+
   const handlePhoneNumberSubmit = async (e) => {
     try {
       e.preventDefault();
       const cleanedNumber = cleanPhoneNumber(phoneNumber);
+      const existingDataString = localStorage.getItem("PRPBackupData");
+      const existingData = existingDataString ? JSON.parse(existingDataString) : [];
+
+      // Backup current data
+      const currentData = {
+        name: name,
+        hospitalName: hospitalName,
+        designation: designation,
+        speciality: speciality,
+        phoneNumber: cleanedNumber
+      };
+      const updatedData = [...existingData, currentData];
+      localStorage.setItem("PRPBackupData", JSON.stringify(updatedData));
       const promise = new Promise(async (resolve, reject) => {
         try {
           const response = await fetch(
-            `/api/twilio?phoneNumber=${encodeURIComponent(cleanedNumber)}`,
+            `https://teralifebackend.onrender.com/api/prps`,
             {
-              method: "GET",
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${process.env.STRAPI_FULL_SECRET || 'fc6f0f047230ede9b32572624ed1910016fe9bd8dfea4a4a17c494aa79424cc6147721432aaeec7297c022d482eb62da27980bec5040885cb5cd1394d24e12d5702b73671d2ad5bfc69e25edde116957162d3f9a2379dc69f5686be62a2e68809b954b513a3d52d31f159a56f0e7691a649df89a3c940dc3ba46f46b89754684'}`
+              },
+              body: JSON.stringify({
+                data: {
+                  name: name,
+                  hospitalName: hospitalName,
+                  designation: designation,
+                  speciality: speciality,
+                  phoneNumber: cleanedNumber
+                }
+
+              }),
             }
           );
           const data = await response.json();
+          console.log(data)
           resolve(data);
         } catch (error) {
           reject(error);
@@ -44,20 +93,45 @@ export default function Home() {
       });
 
       toast.promise(promise, {
-        loading: "Sending code to phone.",
+        loading: "Adding Data...",
         success: (data) => {
-          return "Please check your phone for a code.";
+          return "Data Saved Successfully. ";
         },
         error: "Something went wrong.",
       });
 
-      const data = await promise;
-      setVisible(true);
+      promise.then(() => {
+        const otpPromise = new Promise(async (resolve, reject) => {
+          try {
+            const response = await fetch(
+              `/api/twilio?phoneNumber=${encodeURIComponent(cleanedNumber)}`,
+              {
+                method: "GET",
+              }
+            );
+            const data = await response.json();
+            resolve(data);
+            setVisible(true);
+
+          } catch (error) {
+            reject(error);
+          }
+        });
+
+        toast.promise(otpPromise, {
+          loading: "Sending code to phone.",
+          success: (data) => {
+            return "Please check your phone for a code.";
+          },
+          error: "Something went wrong.",
+        });
+      });
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong.");
     }
   };
+
 
   const handleTwilioCodeSubmit = async (e) => {
     try {
@@ -99,19 +173,78 @@ export default function Home() {
       <Toaster position="top-center" />
       <section className="mb-8 flex flex-col gap-8 items-center">
         <h1 className="text-4xl font-bold text-center ">
-        <Image src={logo} alt="logo" width={150} height={150}></Image>
+          <Image src={logo} alt="logo" width={150} height={150}></Image>
         </h1>
-        
+
         <h2 className="text-xl max-w-screen-sm text-center">
-         Doctor Onboarding
+          PRP Onboarding
         </h2>
       </section>
-      
+
       {!verified ? (
         <div className={styles.neu}>
           <div className="w-max">
             {!visible ? (
               <form onSubmit={handlePhoneNumberSubmit}>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label" htmlFor="name">
+                    <span className="label-text uppercase">Name</span>
+                  </label>
+                  <input
+                    name="name"
+                    type="text"
+                    placeholder="Name"
+                    className="input input-bordered w-full max-w-xs"
+                    value={name}
+                    onChange={handleNameChange}
+                    required={!visible}
+                  />
+                </div>
+
+                <div className="form-control w-full max-w-xs">
+                  <label className="label" htmlFor="name">
+                    <span className="label-text uppercase">Hospital Name</span>
+                  </label>
+                  <input
+                    name="hospitalName"
+                    type="text"
+                    placeholder="Hospital Name"
+                    className="input input-bordered w-full max-w-xs"
+                    value={hospitalName}
+                    onChange={handleHospitalNameChange}
+                    required={!visible}
+                  />
+                </div>
+
+                <div className="form-control w-full max-w-xs">
+                  <label className="label" htmlFor="name">
+                    <span className="label-text uppercase">Designation</span>
+                  </label>
+                  <input
+                    name="designation"
+                    type="text"
+                    placeholder="Designation"
+                    className="input input-bordered w-full max-w-xs"
+                    value={designation}
+                    onChange={handleDesignationChange}
+                    required={!visible}
+                  />
+                </div>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label" htmlFor="name">
+                    <span className="label-text uppercase">Speciality</span>
+                  </label>
+                  <input
+                    name="speciality"
+                    type="text"
+                    placeholder="Speciality"
+                    className="input input-bordered w-full max-w-xs"
+                    value={speciality}
+                    onChange={handleSpecialityChange}
+                    required={!visible}
+                  />
+                </div>
+
                 <div className="form-control w-full max-w-xs">
                   <label className="label" htmlFor="phoneNumber">
                     <span className="label-text uppercase">Phone Number</span>
