@@ -7,7 +7,6 @@ import Image from "next/image";
 import logo from "@/public/teralife-logo.svg";
 
 
-
 export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [twilioCode, setTwilioCode] = useState("");
@@ -22,6 +21,7 @@ export default function Home() {
     const formattedPhoneNumber = formatPhoneNumber(e.target.value);
     setPhoneNumber(formattedPhoneNumber);
   };
+
 
   const handleTwilioCodeChange = (e) => {
     const formattedTwilioCode = formatTwilioCode(e.target.value);
@@ -86,6 +86,8 @@ export default function Home() {
           );
           const data = await response.json();
           console.log(data)
+          setVerified(true);
+
           resolve(data);
         } catch (error) {
           reject(error);
@@ -100,32 +102,32 @@ export default function Home() {
         error: "Something went wrong.",
       });
 
-      promise.then(() => {
-        const otpPromise = new Promise(async (resolve, reject) => {
-          try {
-            const response = await fetch(
-              `/api/twilio?phoneNumber=${encodeURIComponent(cleanedNumber)}`,
-              {
-                method: "GET",
-              }
-            );
-            const data = await response.json();
-            resolve(data);
-            setVisible(true);
+      // promise.then(() => {
+      //   const otpPromise = new Promise(async (resolve, reject) => {
+      //     try {
+      //       const response = await fetch(
+      //         `/api/twilio?phoneNumber=${encodeURIComponent(cleanedNumber)}`,
+      //         {
+      //           method: "GET",
+      //         }
+      //       );
+      //       const data = await response.json();
+      //       resolve(data);
+      //       setVisible(true);
 
-          } catch (error) {
-            reject(error);
-          }
-        });
+      //     } catch (error) {
+      //       reject(error);
+      //     }
+      //   });
 
-        toast.promise(otpPromise, {
-          loading: "Sending code to phone.",
-          success: (data) => {
-            return "Please check your phone for a code.";
-          },
-          error: "Something went wrong.",
-        });
-      });
+      //   toast.promise(otpPromise, {
+      //     loading: "Sending code to phone.",
+      //     success: (data) => {
+      //       return "Please check your phone for a code.";
+      //     },
+      //     error: "Something went wrong.",
+      //   });
+      // });
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong.");
@@ -166,6 +168,18 @@ export default function Home() {
       console.log(error);
       toast.error("Something went wrong.");
     }
+  };
+
+
+  const handleReload = () => {
+    
+    setName('');
+    setDesignation('');
+    setSpeciality('');
+    setPhoneNumber('');
+    setHospitalName('');
+    setVisible(false);
+    setVerified(false);
   };
 
   return (
@@ -287,6 +301,7 @@ export default function Home() {
       ) : (
         <>
           <h1 className="text-6xl mt-16">👍</h1>
+          <button className="btn btn-wide my-4 " onClick={handleReload}>Add New</button>
         </>
       )}
     </main>
